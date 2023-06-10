@@ -1,0 +1,315 @@
+#include <stdio.h>
+#include <string.h>
+
+#define MAX_CLIENTES 100
+#define MAX_PRODUTOS 100
+#define MAX_PEDIDOS 100
+
+struct cliente {
+    int codigo;
+    char nome[50];
+};
+
+struct produto {
+    int codigo;
+    char nome[50];
+    char marca[50];
+};
+
+struct pedido {
+    int codigo;
+    int cliente_codigo;
+    int produto_codigo;
+};
+
+struct cliente clientes[MAX_CLIENTES];
+struct produto produtos[MAX_PRODUTOS];
+struct pedido pedidos[MAX_PEDIDOS];
+int num_clientes = 0;
+int num_produtos = 0;
+int num_pedidos = 0;
+
+void cadastrarCliente() {
+    struct cliente novoCliente;
+    printf("Digite o código do cliente: ");
+    scanf("%d", &novoCliente.codigo);
+    printf("Digite o nome do cliente: ");
+    scanf("%s", novoCliente.nome);
+    clientes[num_clientes++] = novoCliente;
+    printf("Cliente cadastrado com sucesso!\n");
+}
+
+void cadastrarProduto() {
+    struct produto novoProduto;
+    printf("Digite o código do produto: ");
+    scanf("%d", &novoProduto.codigo);
+    printf("Digite o nome do produto: ");
+    scanf("%s", novoProduto.nome);
+    printf("Digite a marca do produto: ");
+    scanf("%s", novoProduto.marca);
+    produtos[num_produtos++] = novoProduto;
+    printf("Produto cadastrado com sucesso!\n");
+}
+
+void cadastrarPedido() {
+    struct pedido novoPedido;
+    printf("Digite o código do pedido: ");
+    scanf("%d", &novoPedido.codigo);
+    
+    int clienteCodigo;
+    printf("Digite o código do cliente: ");
+    scanf("%d", &clienteCodigo);
+    
+    // Verifica se o cliente existe
+    int clienteEncontrado = 0;
+    for (int i = 0; i < num_clientes; i++) {
+        if (clientes[i].codigo == clienteCodigo) {
+            clienteEncontrado = 1;
+            break;
+        }
+    }
+    
+    // Se o cliente não existe, oferece a opção de cadastrar o cliente
+    if (!clienteEncontrado) {
+        printf("Cliente não encontrado. Deseja cadastrar um novo cliente? (S/N): ");
+        char opcao;
+        scanf(" %c", &opcao);
+        if (opcao == 'S' || opcao == 's') {
+            cadastrarCliente();
+            clienteEncontrado = 1;
+        }
+    }
+    
+    if (clienteEncontrado) {
+        int produtoCodigo;
+        printf("Digite o código do produto: ");
+        scanf("%d", &produtoCodigo);
+        
+        // Verifica se o produto existe
+        int produtoEncontrado = 0;
+        for (int i = 0; i < num_produtos; i++) {
+            if (produtos[i].codigo == produtoCodigo) {
+                produtoEncontrado = 1;
+                break;
+            }
+        }
+        
+        if (produtoEncontrado) {
+            novoPedido.cliente_codigo = clienteCodigo;
+            novoPedido.produto_codigo = produtoCodigo;
+            pedidos[num_pedidos++] = novoPedido;
+            printf("Pedido cadastrado com sucesso!\n");
+        } else {
+            printf("Produto não encontrado.\n");
+        }
+    } else {
+        printf("Pedido não cadastrado.\n");
+    }
+}
+
+void excluirCliente() {
+    int codigo;
+    printf("Digite o código do cliente a ser excluído: ");
+    scanf("%d", &codigo);
+    
+    int clienteEncontrado = 0;
+    for (int i = 0; i < num_clientes; i++) {
+        if (clientes[i].codigo == codigo) {
+            // Deslocar os clientes para preencher a posição vazia
+            for (int j = i; j < num_clientes - 1; j++) {
+                clientes[j] = clientes[j + 1];
+            }
+            num_clientes--;
+            clienteEncontrado = 1;
+            break;
+        }
+    }
+    
+    if (clienteEncontrado) {
+        printf("Cliente excluído com sucesso!\n");
+    } else {
+        printf("Cliente não encontrado.\n");
+    }
+}
+
+void excluirProduto() {
+    int codigo;
+    printf("Digite o código do produto a ser excluído: ");
+    scanf("%d", &codigo);
+    
+    int produtoEncontrado = 0;
+    for (int i = 0; i < num_produtos; i++) {
+        if (produtos[i].codigo == codigo) {
+            // Deslocar os produtos para preencher a posição vazia
+            for (int j = i; j < num_produtos - 1; j++) {
+                produtos[j] = produtos[j + 1];
+            }
+            num_produtos--;
+            produtoEncontrado = 1;
+            break;
+        }
+    }
+    
+    if (produtoEncontrado) {
+        printf("Produto excluído com sucesso!\n");
+    } else {
+        printf("Produto não encontrado.\n");
+    }
+}
+
+void excluirPedido() {
+    int codigo;
+    printf("Digite o código do pedido a ser excluído: ");
+    scanf("%d", &codigo);
+    
+    int pedidoEncontrado = 0;
+    for (int i = 0; i < num_pedidos; i++) {
+        if (pedidos[i].codigo == codigo) {
+            // Deslocar os pedidos para preencher a posição vazia
+            for (int j = i; j < num_pedidos - 1; j++) {
+                pedidos[j] = pedidos[j + 1];
+            }
+            num_pedidos--;
+            pedidoEncontrado = 1;
+            break;
+        }
+    }
+    
+    if (pedidoEncontrado) {
+        printf("Pedido excluído com sucesso!\n");
+    } else {
+        printf("Pedido não encontrado.\n");
+    }
+}
+
+void alterarCliente() {
+    int codigo;
+    printf("Digite o código do cliente a ser alterado: ");
+    scanf("%d", &codigo);
+    
+    int clienteEncontrado = 0;
+    for (int i = 0; i < num_clientes; i++) {
+        if (clientes[i].codigo == codigo) {
+            printf("Digite o novo nome do cliente: ");
+            scanf("%s", clientes[i].nome);
+            printf("Cliente alterado com sucesso!\n");
+            clienteEncontrado = 1;
+            break;
+        }
+    }
+    
+    if (!clienteEncontrado) {
+        printf("Cliente não encontrado.\n");
+    }
+}
+
+void alterarProduto() {
+    int codigo;
+    printf("Digite o código do produto a ser alterado: ");
+    scanf("%d", &codigo);
+    
+    int produtoEncontrado = 0;
+    for (int i = 0; i < num_produtos; i++) {
+        if (produtos[i].codigo == codigo) {
+            printf("Digite o novo nome do produto: ");
+            scanf("%s", produtos[i].nome);
+            printf("Digite a nova marca do produto: ");
+            scanf("%s", produtos[i].marca);
+            printf("Produto alterado com sucesso!\n");
+            produtoEncontrado = 1;
+            break;
+        }
+    }
+    
+    if (!produtoEncontrado) {
+        printf("Produto não encontrado.\n");
+    }
+}
+
+void exibirClientes() {
+    printf("Clientes cadastrados:\n");
+    for (int i = 0; i < num_clientes; i++) {
+        printf("Código: %d, Nome: %s\n", clientes[i].codigo, clientes[i].nome);
+    }
+}
+
+void exibirProdutos() {
+    printf("Produtos cadastrados:\n");
+    for (int i = 0; i < num_produtos; i++) {
+        printf("Código: %d, Nome: %s, Marca: %s\n", produtos[i].codigo, produtos[i].nome, produtos[i].marca);
+    }
+}
+
+void exibirPedidos() {
+    printf("Pedidos cadastrados:\n");
+    for (int i = 0; i < num_pedidos; i++) {
+        printf("Código: %d, Cliente: %d, Produto: %d\n", pedidos[i].codigo, pedidos[i].cliente_codigo, pedidos[i].produto_codigo);
+    }
+}
+
+int main() {
+    int opcao;
+    
+    do {
+        printf("\n========== Sistema de Cadastro ==========\n");
+        printf("1. Cadastrar Cliente\n");
+        printf("2. Cadastrar Produto\n");
+        printf("3. Cadastrar Pedido\n");
+        printf("4. Excluir Cliente\n");
+        printf("5. Excluir Produto\n");
+        printf("6. Excluir Pedido\n");
+        printf("7. Alterar Cliente\n");
+        printf("8. Alterar Produto\n");
+        printf("9. Exibir Clientes\n");
+        printf("10. Exibir Produtos\n");
+        printf("11. Exibir Pedidos\n");
+        printf("0. Sair\n");
+        printf("Escolha uma opção: ");
+        scanf("%d", &opcao);
+        
+        switch (opcao) {
+            case 1:
+                cadastrarCliente();
+                break;
+            case 2:
+                cadastrarProduto();
+                break;
+            case 3:
+                cadastrarPedido();
+                break;
+            case 4:
+                excluirCliente();
+                break;
+            case 5:
+                excluirProduto();
+                break;
+            case 6:
+                excluirPedido();
+                break;
+            case 7:
+                alterarCliente();
+                break;
+            case 8:
+                alterarProduto();
+                break;
+            case 9:
+                exibirClientes();
+                break;
+            case 10:
+                exibirProdutos();
+                break;
+            case 11:
+                exibirPedidos();
+                break;
+            case 0:
+                printf("Saindo...\n");
+                break;
+            default:
+                printf("Opção inválida!\n");
+                break;
+        }
+        
+    } while (opcao != 0);
+    
+    return 0;
+}
